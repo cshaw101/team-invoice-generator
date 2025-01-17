@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography, Select, MenuItem, InputLabel, FormControl } from '@mui/material';
+import { Box, Typography, Select, MenuItem, InputLabel, FormControl, Tooltip } from '@mui/material';
 
 const ItemDropdown = ({ storeItems, handleAddItem }) => {
   return (
@@ -19,7 +19,9 @@ const ItemDropdown = ({ storeItems, handleAddItem }) => {
           </MenuItem>
           {storeItems.map((item) => (
             <MenuItem key={item.name} value={JSON.stringify(item)}>
-              {item.name} - ${item.price.toLocaleString()}
+              <Tooltip title={`Price: $${item.price.toLocaleString()}`} arrow>
+                <span>{item.name} - ${item.price.toLocaleString()}</span>
+              </Tooltip>
             </MenuItem>
           ))}
         </Select>

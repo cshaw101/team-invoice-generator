@@ -3,7 +3,7 @@ import TeamInput from "./components/TeamInput";
 import ItemDropdown from "./components/ItemDropdown";
 import SelectedItems from "./components/SelectedItems";
 import InvoiceTotal from "./components/InvoiceTotal";
-import { Container, CssBaseline, Box, Typography } from '@mui/material';
+import { Container, CssBaseline, Box, Typography, Grid, Paper } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 // Store items to be selected for the invoice
@@ -98,14 +98,28 @@ const App = () => {
             Team Invoice Generator
           </Typography>
         </Box>
-        <TeamInput teamName={teamName} setTeamName={setTeamName} />
-        <ItemDropdown storeItems={storeItems} handleAddItem={handleAddItem} />
-        <SelectedItems
-          selectedItems={selectedItems}
-          quantities={quantities}
-          handleQuantityChange={handleQuantityChange}
-          handleDeleteItem={handleDeleteItem}
-        />
+        <Grid container spacing={4}>
+          <Grid item xs={12} md={6}>
+            <Paper sx={{ padding: 3, boxShadow: 3 }}>
+              <TeamInput teamName={teamName} setTeamName={setTeamName} />
+            </Paper>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Paper sx={{ padding: 3, boxShadow: 3 }}>
+              <ItemDropdown storeItems={storeItems} handleAddItem={handleAddItem} />
+            </Paper>
+          </Grid>
+        </Grid>
+        <Box sx={{ marginTop: 4 }}>
+          <Paper sx={{ padding: 3, boxShadow: 3 }}>
+            <SelectedItems
+              selectedItems={selectedItems}
+              quantities={quantities}
+              handleQuantityChange={handleQuantityChange}
+              handleDeleteItem={handleDeleteItem}
+            />
+          </Paper>
+        </Box>
         <InvoiceTotal
           teamName={teamName}
           selectedItems={selectedItems}
