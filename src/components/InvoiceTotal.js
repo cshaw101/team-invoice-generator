@@ -1,16 +1,33 @@
-import React from 'react';
-import { Box, Typography, Button, Card } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, Button, TextField, Card, TextareaAutosize } from '@mui/material';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
-const InvoiceTotal = ({ selectedItems, teamName, calculateTotal, setSelectedItems, quantities }) => {
+const InvoiceTotal = ({ selectedItems, calculateTotal, quantities }) => {
+
+  const [dueDate, setDueDate] = useState('');
+  const [notes, setNotes] = useState('');
+  const [invoiceNumber, setInvoiceNumber] = useState('');
+  const [timestamp, setTimestamp] = useState('');
+
+  // Generate invoice number (for simplicity, using a timestamp or counter)
+  useEffect(() => {
+    const invoiceNum = `INV-${new Date().getTime()}`;
+    setInvoiceNumber(invoiceNum);
+    setTimestamp(new Date().toLocaleString());
+  }, []);
+
   const total = calculateTotal();
+  const finalTotal = total;
 
   const handleExportPDF = () => {
     const doc = new jsPDF();
-    doc.text(`Invoice for Team: ${teamName}`, 20, 10);
+    doc.text(`Invoice Number: ${invoiceNumber}`, 20, 10);
+    doc.text(`Timestamp: ${timestamp}`, 20, 20);
+    doc.text(`Due Date: ${dueDate}`, 20, 30);
+
     doc.autoTable({
-      startY: 20,
+      startY: 40,
       head: [['Item', 'Price', 'Quantity', 'Total']],
       body: selectedItems.map(item => [
         item.name,
@@ -19,7 +36,13 @@ const InvoiceTotal = ({ selectedItems, teamName, calculateTotal, setSelectedItem
         `$${(item.price * (quantities[item.name] || 1)).toLocaleString()}`
       ])
     });
-    doc.text(`Total: $${total.toLocaleString()}`, 20, doc.lastAutoTable.finalY + 10);
+
+    doc.text(`Final Total: $${finalTotal.toLocaleString()}`, 20, doc.lastAutoTable.finalY + 10);
+
+    if (notes) {
+      doc.text(`Notes: ${notes}`, 20, doc.lastAutoTable.finalY + 20);
+    }
+
     doc.save('invoice.pdf');
   };
 
@@ -27,8 +50,53 @@ const InvoiceTotal = ({ selectedItems, teamName, calculateTotal, setSelectedItem
     <Box sx={{ marginTop: 4 }}>
       <Card sx={{ padding: 3, boxShadow: 3 }}>
         <Typography variant="h6" color="primary" fontWeight="bold" sx={{ textAlign: 'center' }}>
-          Total Invoice: ${total.toLocaleString()}
+          Total Invoice: ${finalTotal.toLocaleString()}
         </Typography>
+        
+        {/* Invoice Number and Timestamp */}
+        <Typography variant="body2" color="textSecondary" sx={{ textAlign: 'center', marginTop: 2 }}>
+          Invoice Number: {invoiceNumber}
+        </Typography>
+        <Typography variant="body2" color="textSecondary" sx={{ textAlign: 'center' }}>
+          Generated on: {timestamp}
+        </Typography>
+
+        {/* Due Date Picker */}
+        <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 3 }}>
+          <TextField
+            label="Due Date"
+            type="date"
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
+            variant="outlined"
+            sx={{ width: '200px' }}
+            InputLabelProps={{
+              shrink: true, // Ensures the label is above the input box
+            }}
+            inputProps={{
+              placeholder: 'yyyy-mm-dd', // Adds a placeholder for the date format
+            }}
+          />
+        </Box>
+
+        {/* Notes Section */}
+        <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 3 }}>
+          <TextareaAutosize
+            minRows={4}
+            placeholder="Add any additional notes here"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            style={{
+              width: '80%',
+              padding: '10px',
+              fontSize: '14px',
+              borderRadius: '4px',
+              border: '1px solid #ccc',
+            }}
+          />
+        </Box>
+
+        {/* Export PDF Button */}
         <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 3 }}>
           <Button variant="contained" color="secondary" onClick={handleExportPDF}>
             Export PDF
