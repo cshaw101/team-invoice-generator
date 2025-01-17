@@ -4,16 +4,15 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
 const InvoiceTotal = ({ selectedItems, calculateTotal, quantities }) => {
-
   const [dueDate, setDueDate] = useState('');
   const [notes, setNotes] = useState('');
   const [invoiceNumber, setInvoiceNumber] = useState('');
   const [timestamp, setTimestamp] = useState('');
 
-  // Generate invoice number (for simplicity, using a timestamp or counter)
+  // Generate a random 6-digit invoice number each time
   useEffect(() => {
-    const invoiceNum = `INV-${new Date().getTime()}`;
-    setInvoiceNumber(invoiceNum);
+    const randomInvoiceNum = `INV-${Math.floor(100000 + Math.random() * 900000)}`; // Random number between 100000 and 999999
+    setInvoiceNumber(randomInvoiceNum);
     setTimestamp(new Date().toLocaleString());
   }, []);
 
