@@ -98,7 +98,7 @@ const InvoiceTotal = ({ selectedItems, calculateTotal, quantities }) => {
         {/* Export PDF Button */}
         <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 3 }}>
           <Button variant="contained" color="secondary" onClick={handleExportPDF}>
-            Export PDF
+            Export To PDF
           </Button>
         </Box>
       </Card>
