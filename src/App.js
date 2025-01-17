@@ -6,6 +6,7 @@ import InvoiceTotal from "./components/InvoiceTotal";
 import { Container, CssBaseline, Box, Typography } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
+// Store items to be selected for the invoice
 const storeItems = [
   { name: "Soft Tires", price: 10000 },
   { name: "Medium Tires", price: 10000 },
@@ -31,6 +32,7 @@ const storeItems = [
   { name: "FIA Dispute Resolution", price: 50000 },
 ];
 
+// Theme configuration for styling
 const theme = createTheme({
   palette: {
     primary: {
@@ -52,29 +54,38 @@ const theme = createTheme({
 });
 
 const App = () => {
-  const [teamName, setTeamName] = useState("");
-  const [selectedItems, setSelectedItems] = useState([]);
-  const [quantities, setQuantities] = useState({});
+  const [teamName, setTeamName] = useState(""); // State for team name
+  const [selectedItems, setSelectedItems] = useState([]); // State for selected items
+  const [quantities, setQuantities] = useState({}); // State for item quantities
 
+  // Handle adding an item to the selected items list
   const handleAddItem = (item) => {
     if (!selectedItems.includes(item)) {
       setSelectedItems([...selectedItems, item]);
-      setQuantities({ ...quantities, [item.name]: 1 });
+      setQuantities({ ...quantities, [item.name]: 1 }); // Default quantity of 1
     }
   };
 
+  // Handle deleting an item from the selected items list
   const handleDeleteItem = (itemToDelete) => {
     const updatedItems = selectedItems.filter(item => item !== itemToDelete);
     setSelectedItems(updatedItems);
+    const updatedQuantities = { ...quantities };
+    delete updatedQuantities[itemToDelete.name];
+    setQuantities(updatedQuantities); // Ensure the quantity is removed as well
   };
 
+  // Handle changing the quantity of a selected item
   const handleQuantityChange = (itemName, quantity) => {
-    setQuantities({ ...quantities, [itemName]: parseInt(quantity) || 1 });
+    if (quantity >= 1) {
+      setQuantities({ ...quantities, [itemName]: parseInt(quantity) });
+    }
   };
 
+  // Calculate the total amount for the selected items and their quantities
   const calculateTotal = () => {
     return selectedItems.reduce((total, item) => {
-      return total + item.price * (quantities[item.name] || 1);
+      return total + item.price * (quantities[item.name] || 1); // Default quantity of 1 if not specified
     }, 0);
   };
 
@@ -98,6 +109,7 @@ const App = () => {
         <InvoiceTotal
           teamName={teamName}
           selectedItems={selectedItems}
+          quantities={quantities}
           calculateTotal={calculateTotal}
           setSelectedItems={setSelectedItems}
         />

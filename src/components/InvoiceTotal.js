@@ -3,7 +3,7 @@ import { Box, Typography, Button } from '@mui/material';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
-const InvoiceTotal = ({ selectedItems, teamName, calculateTotal, setSelectedItems }) => {
+const InvoiceTotal = ({ selectedItems, teamName, calculateTotal, setSelectedItems, quantities }) => {
   const total = calculateTotal();
 
   const handleDeleteItem = (itemToDelete) => {
@@ -22,9 +22,10 @@ const InvoiceTotal = ({ selectedItems, teamName, calculateTotal, setSelectedItem
     doc.text('Team Invoice', 14, 30);
     doc.autoTable({
       startY: 35,
-      head: [['Item', 'Price']],
+      head: [['Item', 'Quantity', 'Price']],
       body: selectedItems.map((item) => [
         item.name,
+        quantities[item.name] || 1,  // Default quantity is 1 if not specified
         `$${item.price.toLocaleString()}`,
       ]),
     });
